@@ -3,9 +3,17 @@ const bcrypt = require('bcrypt');
 const _ = require('underscore');
 const app = express();
 const Usuario = require('../models/usuario');
+const auth = require('../middlewares/authentication');
 
-app.get('/usuario', function (req, res) {
+
+app.get('/usuario', auth.token_verification ,(req, res) => {
   // res.json('getUsuario');
+
+  // return res.json({
+  //   usuario:req.usuario,
+  //   nombre:req.usuario.nombre,
+  //   email:req.usuario.email
+  // });
 
   let desde = req.query.desde || 0;
   desde = Number(desde)-1;
@@ -35,7 +43,7 @@ app.get('/usuario', function (req, res) {
     });
 });
 
-app.post('/usuario', function (req, res) {
+app.post('/usuario', [auth.token_verification,auth.admin_verification] , (req, res)=> {
   let body = req.body;
 
   let usuario = new Usuario({
@@ -59,14 +67,14 @@ app.post('/usuario', function (req, res) {
       usuario:usuarioDB
     });
   });
-})
+});
 
-app.put('/usuario/:id', function (req, res) {
+app.put('/usuario/:id', [auth.token_verification,auth.admin_verification] ,(req, res)=> {
   let id = req.params.id;
   let body = _.pick(req.body,['nombre', 'email', 'role', 'img']);
 
   Usuario.findByIdAndUpdate(id,body,
-    {new:true,runValidators:true,useFindAndModify:false},
+    {new:true,runValidators:true,context: 'query',useFindAndModify:false},
     (err,usuarioDB) => {
     if(err){
       return res.status(400).json({
@@ -85,14 +93,14 @@ app.put('/usuario/:id', function (req, res) {
 
 })
 
-app.delete('/usuario/:id', function (req, res) {
+app.delete('/usuario/:id', [auth.token_verification,auth.admin_verification] ,(req, res)=> {
   // res.json('deleteUsuario');
   let id = req.params.id;
   let body = {estado:false};
 
   // Usuario.findByIdAndRemove(id,(err,usuarioEliminado) => {
   Usuario.findByIdAndUpdate(id,body,
-    {new:true,runValidators:true,useFindAndModify:false},
+    {new:true,runValidators:true,context: 'query',useFindAndModify:false},
     (err,usuarioDB) => {
     if(err){
       return res.status(400).json({
