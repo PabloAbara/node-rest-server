@@ -7,15 +7,7 @@ const auth = require('../middlewares/authentication');
 
 
 app.get('/usuario', auth.token_verification ,(req, res) => {
-  // res.json('getUsuario');
-
-  // return res.json({
-  //   usuario:req.usuario,
-  //   nombre:req.usuario.nombre,
-  //   email:req.usuario.email
-  // });
-
-  let desde = req.query.desde || 0;
+  let desde = req.query.desde || 1;
   desde = Number(desde)-1;
 
   let limite = req.query.limite || 5;
@@ -115,9 +107,6 @@ app.delete('/usuario/:id', [auth.token_verification,auth.admin_verification] ,(r
       usuario:usuarioDB
     });
   });
-
-
-
 
 });
 

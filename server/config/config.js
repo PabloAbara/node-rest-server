@@ -20,7 +20,7 @@ process.env.URLDB = urlDB;
 //
 // Vencimiento del TOKEN
 // 60 * 60 * 24 * 30
-process.env.CADUCIDAD_TOKEN = 60 * 60 * 24 * 30 ;
+process.env.CADUCIDAD_TOKEN = '72h' ;
 //
 // SEED
 //
